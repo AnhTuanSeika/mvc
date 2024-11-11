@@ -1,0 +1,51 @@
+services: 
+  mysql8-container:
+    container_name: mysql8-container
+    image: mysql:8.4.2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: osrs_db
+    ports:
+      - 3306:3306
+    # volumes:
+    # - 
+    networks:
+      - osrs-network
+
+  phpmyadmin8-container:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin8-container
+    restart: always
+    depends_on:
+      - mysql8-container
+    ports:
+      - "8100:80"
+    environment:
+      PMA_HOST: mysql8-container
+    networks:
+      - osrs-network
+
+  xampp-container:
+    image: tomsik68/xampp
+    container_name: xampp-container
+    ports:
+      - "8080:80"     # Apache
+    volumes:
+      - ./osrs:/www/htdocs
+    networks:
+      - osrs-network
+
+# docker-compose -f ./_deloyment.yaml rm -s -f mysql8-container
+# docker-compose -f ./_deloyment.yaml up -d mysql8-container
+
+# docker-compose -f ./_deloyment.yaml rm -s -f phpmyadmin8-container
+# docker-compose -f ./_deloyment.yaml up -d phpmyadmin8-container
+
+# docker-compose -f ./_deloyment.yaml rm -s -f xampp-container
+# docker-compose -f ./_deloyment.yaml up -d xampp-container
+
+networks:
+  osrs-network:
+    name: osrs-network
+    driver: bridge
